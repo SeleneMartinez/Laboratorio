@@ -167,4 +167,3 @@ void inicializar_nivel(nivel_t* nivel, int numero_nivel, int cantidad_baldosas_p
     nivel->tope_obstaculos = tope_obstaculos;
 
 
-}
