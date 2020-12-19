@@ -290,11 +290,8 @@ char obtenerPersonaje(int puntaje, int altura){
     return esta;
 }
 bool alturaProximaPersonaje1(int alturaPersonaje1, int alturaPersonaje2, int altura){
-    bool proximaAP1 = false;
-    if(abs(alturaPersonaje1-altura)<abs(alturaPersonaje2-altura)){
-        proximaAP1 = true;
-    }
-    return proximaAP1;
+   
+    return (abs(alturaPersonaje1-altura)<abs(alturaPersonaje2-altura));
 }
 void detectar_personaje(char* personaje){
     
