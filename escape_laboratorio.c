@@ -7,6 +7,7 @@ const char PINCHE = 'P';
 const char BALDOSA_LIBRE = ' ';
 const char BOMBA = 'B';
 const char GUARDIA = 'G';
+const char PARED = '#';
 
 const int IGUALAR_POSICION_NIVEL =1;
 const int NIVEL_INICIAL = 1;
@@ -19,8 +20,39 @@ const int DIMENSION_NIVEL_IMPAR = 12;
 
 
 int main(){
+    char laboratorio[12][12];
+    for(int i =0; i<12; i+=1){
+        for(int j = 0; j<12; j+=1){
+            
+            laboratorio[i][j] = ' ';
+        }
+    }
 
-    printf("hola");
+    nivel_t nivel;
+    inicializar_nivel(&nivel,1,6,3, true);
+    for(int i = 0; i< nivel.tope_paredes; i++){
+        int fila = nivel.paredes[i].fil;
+        int col = nivel.paredes[i].col;
+        laboratorio[fila][col] = PARED;
+    }
+
+ 
+    int fila = nivel.entrada.fil;
+    int col = nivel.entrada.col;
+    laboratorio[fila][col] = 'E';
+    fila = nivel.salida.fil;
+    col = nivel.salida.col;
+    laboratorio[fila][col] = 'S';
+
+    for(int i =0; i<12; i+=1){
+        for(int j = 0; j<12; j+=1){
+            
+            printf("%c ",laboratorio[i][j]);
+        }
+        printf("\n");
+    }
+
+
     return 0;
 }
 
@@ -104,42 +136,22 @@ void inicializar_nivel(nivel_t* nivel, int numero_nivel, int cantidad_baldosas_p
     int dimension = obtener_Dimension_Nivel(numero_nivel);
     char laboratorio[dimension][dimension];
     inicializar_laboratorio(dimension,laboratorio);
+    obtener_paredes(numero_nivel,(nivel->paredes),&(nivel->tope_paredes));
+    for(int i = 0; i< nivel->tope_paredes; i++){
+        int fila = nivel->paredes[i].fil;
+        int col = nivel->paredes[i].col;
+        laboratorio[fila][col] = PARED;
+    }
 
     obtener_posicion_aleatoria(&(nivel->entrada), dimension, laboratorio);
     obtener_posicion_aleatoria(&(nivel->salida),dimension,laboratorio);
+    
 
-    obtener_paredes(numero_nivel,(nivel->paredes),&(nivel->tope_paredes));
 
     int tope_obstaculos =0;
+   
 
-    for(int i = 0; i< cantidad_baldosas_pinches; i++){
-        elemento_t pinche;
-        coordenada_t posicion;
-        pinche.tipo = PINCHE;
-        obtener_posicion_aleatoria(&posicion,dimension,laboratorio);
-        pinche.posicion = posicion;
-        nivel->obstaculos[i] = pinche;
-        tope_obstaculos++;
-    }
-
-    for(int i = cantidad_baldosas_pinches; i< cantidad_guardia; i++){
-        elemento_t guardia;
-        coordenada_t posicion;
-        guardia.tipo = GUARDIA;
-        obtener_posicion_aleatoria(&posicion,dimension,laboratorio);
-        guardia.posicion = posicion;
-        nivel->obstaculos[i] = guardia;
-        tope_obstaculos++;
-    }
-    if(hay_bomba){
-        elemento_t bomba;
-        coordenada_t posicion;
-        bomba.tipo = BOMBA;
-        obtener_posicion_aleatoria(&posicion,dimension,laboratorio);
-        bomba.posicion = posicion;
-        nivel->obstaculos[cantidad_guardia] = bomba;
-        tope_obstaculos++;
-    }
+  
 
     nivel->tope_obstaculos = tope_obstaculos;
 
