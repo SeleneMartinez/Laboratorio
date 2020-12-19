@@ -161,9 +161,6 @@ void inicializar_nivel(nivel_t* nivel, int numero_nivel, int cantidad_baldosas_p
     for(int i =0; i<tope_obstaculos;i++){
         printf("%c ",nivel->obstaculos[i].tipo);
     }
-
-  
-
     nivel->tope_obstaculos = tope_obstaculos;
 
-
+}
