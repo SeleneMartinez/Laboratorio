@@ -1,13 +1,20 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <ctype.h>
+#include "detector_personajes.h"
 #define JHONNY "Jhonny Bravo"
 #define BELLOTA "Bellota"
 #define POLLITO "Pollito"
 #define BLUE "Blue"
 #define HUESO "Puro Hueso"
 #define CORAJE "Coraje"
+
+#define INDICADOR_JHONNY 'J'
+#define INDICADOR_BELLOTA 'S'
+#define INDICADOR_POLLITO 'P'
+#define INDICADOR_BLUE 'B'
+#define INDICADOR_HUESO 'H'
+#define INDICADOR_CORAJE 'C'
 
 #define VERDE  'V'
 #define ROSA  'R'
@@ -57,8 +64,10 @@ const int PUNTOS_SALADO =5, PUNTOS_DULCE = 15, PUNTOS_AMARGO = 20;
 typedef struct duo{
     char personaje1[12];
     char personaje2[12];
-    int altura1;
-    int altura2;
+    int altura_personaje1;
+    int altura_personaje2;
+    char indicador_personaje1;
+    char indicador_personaje2;
     
 }t_duo;
 
@@ -75,8 +84,9 @@ void calcularPuntajePorAnio( int *puntaje, int anio);
 int calcularMultiplicador(int talle);
 void calcularPuntaje(int *puntaje, int talle, int altura, int anio, char color, char sabor);
 t_duo obtenerDuo(int puntaje);
-void obtenerPersonaje(int puntos, int altura);
+char obtenerPersonaje(int puntos, int altura);
 bool estaElElemento(const char vector[], char elemento, int tamanio);
+bool alturaProximaPersonaje1(int alturaPersonaje1, int alturaPersonaje2, int altura);
 
 /* pre: recibe un vector de chars*/
 /*post: imprime el vector como cadena por pantalla*/
@@ -135,11 +145,8 @@ void pedirAltura(int *altura){
     char mensaje[] = "Ingrese altura (entre 1 y 240) \n --->";
     while( *altura < ALTURA_MIN || *altura > ALTURA_MAX){
         imprimir(mensaje);
-        fgets(line,sizeof line,stdin);
-        *altura = sscanf(line, "%d", &numero);
-        if(*altura){
-            break;
-        }
+        scanf("%d",altura);
+        
     }
 }
 
@@ -228,9 +235,9 @@ void calcularPuntaje(int *puntaje, int talle, int altura, int anio, char color, 
     *puntaje = *puntaje * multiplicador;
 }
 t_duo obtenerDuo(int puntaje){
-    t_duo pollitoPuroHueso = {POLLITO, HUESO, ALTURA_POLLITO,ALTURA_HUESO};
-    t_duo johnyCoraje = {CORAJE, JHONNY, ALTURA_CORAJE,ALTURA_JHONNY};
-    t_duo blueBellota = {BLUE, BELLOTA, ALTURA_BLUE, ALTURA_BELLOTA};
+    t_duo pollitoPuroHueso = {POLLITO, HUESO, ALTURA_POLLITO,ALTURA_HUESO, INDICADOR_POLLITO,INDICADOR_HUESO};
+    t_duo johnyCoraje = {CORAJE, JHONNY, ALTURA_CORAJE,ALTURA_JHONNY,INDICADOR_CORAJE,INDICADOR_JHONNY};
+    t_duo blueBellota = {BLUE, BELLOTA, ALTURA_BLUE, ALTURA_BELLOTA,INDICADOR_BLUE,INDICADOR_BELLOTA};
 
     t_duo resultado;
     if( 1 <= puntaje  && puntaje <= 80){
@@ -247,19 +254,25 @@ t_duo obtenerDuo(int puntaje){
 /* pre: recibe un entero puntaje y un entero altura*/
 /*post: imprime el personaje seleccionado dependiendo del puntaje obtenido y de la menor diferencia entre
 la altura de los personajes y la altura ingresada*/
-void obtenerPersonaje(int puntaje, int altura){
+char obtenerPersonaje(int puntaje, int altura){
     t_duo resultado = obtenerDuo(puntaje);
     char mensaje[] = "Con un total de ";
     char mensaje1[] = " puntos tu personaje es: ";
+    char personaje;
     imprimir(mensaje);
     printf("%d", puntaje);
     imprimir(mensaje1);
-    if( abs(altura - resultado.altura1)< (abs ( altura - resultado.altura2))){
+    if( alturaProximaPersonaje1(resultado.altura_personaje1,resultado.altura_personaje2,altura)){
         printf("%s \n", resultado.personaje1);
+        printf("%d", resultado.altura_personaje1);
+        personaje = resultado.indicador_personaje1;
     }
     else{
         printf("%s\n", resultado.personaje2);
+        personaje = resultado.indicador_personaje2;
     }
+
+    return personaje;
 }
 /* pre: recibe un vector de caracteres y un caracter elemento */
 /* post: devuelve true si el elemento esta en el vector, false si no*/
@@ -276,8 +289,14 @@ void obtenerPersonaje(int puntaje, int altura){
     }
     return esta;
 }
-
-int main(){
+bool alturaProximaPersonaje1(int alturaPersonaje1, int alturaPersonaje2, int altura){
+    bool proximaAP1 = false;
+    if(abs(alturaPersonaje1-altura)<abs(alturaPersonaje2-altura)){
+        proximaAP1 = true;
+    }
+    return proximaAP1;
+}
+void detectar_personaje(char* personaje){
     
 
     int puntaje = 0;
@@ -299,5 +318,5 @@ int main(){
     calcularPuntaje(&puntaje, talle,altura,anio,color,sabor);
     obtenerPersonaje(puntaje, altura);
 
-    return 0;
+
 }
