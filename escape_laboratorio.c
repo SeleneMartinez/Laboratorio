@@ -36,6 +36,7 @@ int main(){
         laboratorio[fila][col] = PARED;
     }
 
+
  
     int fila = nivel.entrada.fil;
     int col = nivel.entrada.col;
@@ -43,6 +44,11 @@ int main(){
     fila = nivel.salida.fil;
     col = nivel.salida.col;
     laboratorio[fila][col] = 'S';
+     for(int i =0; i<nivel.tope_obstaculos;i++){
+         int f = nivel.obstaculos[i].posicion.fil;
+         int c = nivel.obstaculos[i].posicion.col;
+        laboratorio[f][c] = nivel.obstaculos[i].tipo;
+    }
 
     for(int i =0; i<12; i+=1){
         for(int j = 0; j<12; j+=1){
@@ -158,9 +164,7 @@ void inicializar_nivel(nivel_t* nivel, int numero_nivel, int cantidad_baldosas_p
         nivel->obstaculos[i] =pinche;
     }
    
-    for(int i =0; i<tope_obstaculos;i++){
-        printf("%c ",nivel->obstaculos[i].tipo);
-    }
+   
     nivel->tope_obstaculos = tope_obstaculos;
 
 }
