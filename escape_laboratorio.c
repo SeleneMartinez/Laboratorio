@@ -148,8 +148,19 @@ void inicializar_nivel(nivel_t* nivel, int numero_nivel, int cantidad_baldosas_p
     
 
 
-    int tope_obstaculos =0;
+    int tope_obstaculos =cantidad_baldosas_pinches;
+    for(int i = 0; i<tope_obstaculos; i++){
+        elemento_t pinche;
+        coordenada_t posicion;
+        obtener_posicion_aleatoria(&posicion,dimension,laboratorio);
+        pinche.posicion = posicion;
+        pinche.tipo = PINCHE;
+        nivel->obstaculos[i] =pinche;
+    }
    
+    for(int i =0; i<tope_obstaculos;i++){
+        printf("%c ",nivel->obstaculos[i].tipo);
+    }
 
   
 
