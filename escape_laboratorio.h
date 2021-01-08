@@ -4,15 +4,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include "detector_personajes.h"
- 
 
 #define MAX_OBSTACULOS 25
 #define MAX_HERRAMIENTAS 25
 #define MAX_NIVELES 4
 #define MAX_PAREDES 250
-
-
 
 typedef struct coordenada {
 	int fil;
@@ -112,7 +108,5 @@ void mover_personaje(juego_t* juego, char movimiento);
  * el nivel, los obstaculos posicionados, las paredes, etc.
  */
 void mostrar_juego(juego_t juego);
-
-bool posicionLibre(int dimension, char laboratorio[dimension][dimension], int fila, int col);
 
 #endif /* __ESCAPE_LABORATORIO_H__ */

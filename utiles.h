@@ -1,11 +1,8 @@
 #ifndef __UTILES_H__
 #define __UTILES_H__
 #include <stdio.h>
-#include "escape_laboratorio.h"
 
 #define MAX_PAREDES 250
-
-
 
 /* Pre condiciones: El parametro nivel debe contener el valor de un nivel (1 a 4).
  * Post condiciones: Devuelve el vector de coordenadas de las paredes cargado, junto a su respectivo tope.
