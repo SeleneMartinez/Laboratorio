@@ -1,5 +1,7 @@
 #ifndef __UTILES_H__
 #define __UTILES_H__
+
+#include "escape_laboratorio.h"
 #include <stdio.h>
 
 #define MAX_PAREDES 250

@@ -1,75 +1,4 @@
-#include <stdio.h>
-#include <stdbool.h>
-#include <stdlib.h>
 #include "detector_personajes.h"
-#define JHONNY "Jhonny Bravo"
-#define BELLOTA "Bellota"
-#define POLLITO "Pollito"
-#define BLUE "Blue"
-#define HUESO "Puro Hueso"
-#define CORAJE "Coraje"
-
-#define INDICADOR_JHONNY 'J'
-#define INDICADOR_BELLOTA 'S'
-#define INDICADOR_POLLITO 'P'
-#define INDICADOR_BLUE 'B'
-#define INDICADOR_HUESO 'H'
-#define INDICADOR_CORAJE 'C'
-
-#define VERDE  'V'
-#define ROSA  'R'
-#define NEGRO  'N'
-#define AMARILLO  'Y'
-#define AZUL  'A'
-#define BLANCO  'B'
-#define SALADO  'S'
-#define DULCE  'D'
-#define AMARGO  'A'
-
-const int ALTURA_JHONNY = 180;
-const int ALTURA_BELLOTA = 120;
-const int ALTURA_POLLITO = 50;
-const int ALTURA_BLUE = 140;
-const int ALTURA_HUESO = 200;
-const int ALTURA_CORAJE = 30;
-
-
-
-const char COLORES[] = {NEGRO, BLANCO,AMARILLO,ROSA,AZUL,VERDE};
-const char SABORES[] = {SALADO,DULCE,AMARGO};
-const int TALLES[] = {0,37,38,39,40,41,42,43,44,45,46,47};
-
-const int SIN_ZAPATILLAS = 0, MIN_TALLE1 = 33, MAX_TALLE1 = 37;
-const int MIN_TALLE2 = 38, MAX_TALLE2 = 42, MIN_TALLE3 = 43, MAX_TALLE3 = 47;
-const int CANTIDAD_SABORES = 3;
-const int CANTIDAD_COLORES = 6;
-const int CANTIDAD_TALLES = 12;
-
-const int PUNTO_ADICIONAL_ANIO = 1;
-const int DIVISOR_ANIO = 20;
-
-const int MULTIPLICADOR1 = 1, MULTIPLICADOR2 = 2, MULTIPLICADOR3 =3, MULTIPLICADOR4 =4;
-
-const int ANIO_MAX = 2008, ANIO_MIN = 1988;
-const int TALLE_MAX = 47, TALLE_MIN = 37, SIN_ZAPATOS = 0;
-const int ALTURA_MAX =240, ALTURA_MIN =1;
-const int MAX_ASCII = 126, MIN_ASCII =20;
-
-const int PUNTOS_ROSA = 5, PUNTOS_AMARILLO = 5, PUNTOS_BLANCO = 15, PUNTOS_NEGRO = 15;
-const int PUNTOS_AZUL = 20, PUNTOS_VERDE = 20;
-const int PUNTOS_SALADO =5, PUNTOS_DULCE = 15, PUNTOS_AMARGO = 20;
-
-
-
-typedef struct duo{
-    char personaje1[12];
-    char personaje2[12];
-    int altura_personaje1;
-    int altura_personaje2;
-    char indicador_personaje1;
-    char indicador_personaje2;
-    
-}t_duo;
 
 
 void imprimir(char mensaje[]);
@@ -83,10 +12,9 @@ void calcularPuntajePorSabor(int *puntaje, char sabor);
 void calcularPuntajePorAnio( int *puntaje, int anio);
 int calcularMultiplicador(int talle);
 void calcularPuntaje(int *puntaje, int talle, int altura, int anio, char color, char sabor);
-t_duo obtenerDuo(int puntaje);
-char obtenerPersonaje(int puntos, int altura);
+duo_t obtenerDuo(int puntaje);
+void obtenerPersonaje(int puntos, int altura, char *personae);
 bool estaElElemento(const char vector[], char elemento, int tamanio);
-bool alturaProximaPersonaje1(int alturaPersonaje1, int alturaPersonaje2, int altura);
 
 /* pre: recibe un vector de chars*/
 /*post: imprime el vector como cadena por pantalla*/
@@ -100,7 +28,7 @@ void pedirAnioNacimiento(int *anio){
     while( *anio > ANIO_MAX || *anio< ANIO_MIN){
         printf("Ingrese su anio de nacimiento (Entre %d y %d) \n --->: ", ANIO_MIN, ANIO_MAX);
         scanf(" %d", anio);
-        (int) (*anio);
+        
     }
 }
 /* pre: recibe una referencia a un caracter*/
@@ -120,9 +48,9 @@ void pedirSabor( char *sabor){
 Actualiza el entero referenciado con este valor*/
 void pedirTalle(int *talle){
     
-    while((*talle != SIN_ZAPATOS) && (*talle > TALLE_MAX || *talle < TALLE_MIN)){
+    while((*talle > TALLE_MAX || *talle < TALLE_MIN) && (*talle != SIN_ZAPATOS)){
         printf("Ingrese talle  \n Si usa zapatos ingrese un numero entre %d y %d \n Si no usa zapatos ingrese %d \n --->: ", TALLE_MIN, TALLE_MAX,SIN_ZAPATILLAS);
-        scanf("%d", talle);
+        scanf(" %d", talle);
    
     }
 }
@@ -145,8 +73,11 @@ void pedirAltura(int *altura){
     char mensaje[] = "Ingrese altura (entre 1 y 240) \n --->";
     while( *altura < ALTURA_MIN || *altura > ALTURA_MAX){
         imprimir(mensaje);
-        scanf("%d",altura);
-        
+        fgets(line,sizeof line,stdin);
+        *altura = sscanf(line, "%d", &numero);
+        if(*altura){
+            break;
+        }
     }
 }
 
@@ -234,12 +165,12 @@ void calcularPuntaje(int *puntaje, int talle, int altura, int anio, char color, 
     calcularPuntajePorSabor(puntaje, sabor);
     *puntaje = *puntaje * multiplicador;
 }
-t_duo obtenerDuo(int puntaje){
-    t_duo pollitoPuroHueso = {POLLITO, HUESO, ALTURA_POLLITO,ALTURA_HUESO, INDICADOR_POLLITO,INDICADOR_HUESO};
-    t_duo johnyCoraje = {CORAJE, JHONNY, ALTURA_CORAJE,ALTURA_JHONNY,INDICADOR_CORAJE,INDICADOR_JHONNY};
-    t_duo blueBellota = {BLUE, BELLOTA, ALTURA_BLUE, ALTURA_BELLOTA,INDICADOR_BLUE,INDICADOR_BELLOTA};
+duo_t obtenerDuo(int puntaje){
+    duo_t pollitoPuroHueso = {POLLITO, HUESO, ALTURA_POLLITO,ALTURA_HUESO,ID_POLLITO, ID_HUESO};
+    duo_t johnyCoraje = {CORAJE, JHONNY, ALTURA_CORAJE,ALTURA_JHONNY, ID_CORAJE,ID_JOHNNY};
+    duo_t blueBellota = {BLUE, BELLOTA, ALTURA_BLUE, ALTURA_BELLOTA, ID_BLUE, ID_BELLOTA};
 
-    t_duo resultado;
+    duo_t resultado;
     if( 1 <= puntaje  && puntaje <= 80){
         resultado = johnyCoraje;
     }
@@ -254,25 +185,21 @@ t_duo obtenerDuo(int puntaje){
 /* pre: recibe un entero puntaje y un entero altura*/
 /*post: imprime el personaje seleccionado dependiendo del puntaje obtenido y de la menor diferencia entre
 la altura de los personajes y la altura ingresada*/
-char obtenerPersonaje(int puntaje, int altura){
-    t_duo resultado = obtenerDuo(puntaje);
+void obtenerPersonaje(int puntaje, int altura, char *personaje){
+    duo_t resultado = obtenerDuo(puntaje);
     char mensaje[] = "Con un total de ";
     char mensaje1[] = " puntos tu personaje es: ";
-    char personaje;
     imprimir(mensaje);
     printf("%d", puntaje);
     imprimir(mensaje1);
-    if( alturaProximaPersonaje1(resultado.altura_personaje1,resultado.altura_personaje2,altura)){
+    if( abs(altura - resultado.altura_personaje1)< (abs ( altura - resultado.altura_personaje2))){
         printf("%s \n", resultado.personaje1);
-        printf("%d", resultado.altura_personaje1);
-        personaje = resultado.indicador_personaje1;
+        *personaje = resultado.id_personaje1;
     }
     else{
         printf("%s\n", resultado.personaje2);
-        personaje = resultado.indicador_personaje2;
+        *personaje = resultado.id_personaje2;
     }
-
-    return personaje;
 }
 /* pre: recibe un vector de caracteres y un caracter elemento */
 /* post: devuelve true si el elemento esta en el vector, false si no*/
@@ -289,12 +216,8 @@ char obtenerPersonaje(int puntaje, int altura){
     }
     return esta;
 }
-bool alturaProximaPersonaje1(int alturaPersonaje1, int alturaPersonaje2, int altura){
-   
-    return (abs(alturaPersonaje1-altura)<abs(alturaPersonaje2-altura));
-}
-void detectar_personaje(char* personaje){
-    
+
+void detectar_personaje(char* personaje_detectado){
 
     int puntaje = 0;
     int anio = 0;
@@ -313,7 +236,8 @@ void detectar_personaje(char* personaje){
 
     
     calcularPuntaje(&puntaje, talle,altura,anio,color,sabor);
-    obtenerPersonaje(puntaje, altura);
+    obtenerPersonaje(puntaje, altura, personaje_detectado);
 
-
+    return 0;
 }
+
